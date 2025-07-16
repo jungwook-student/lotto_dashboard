@@ -59,15 +59,15 @@ if st.session_state.lotto_numbers:
             display:inline-flex;
             justify-content:center;
             align-items:center;
-            margin:6px;
-            width:60px;
-            height:60px;
-            border-radius:30px;
+            margin:4px;
+            width:42px;
+            height:42px;
+            border-radius:21px;
             background:{color};
             color:#000;
             font-weight:bold;
-            font-size:22px;
-            box-shadow:2px 2px 5px rgba(0,0,0,0.3);'
+            font-size:18px;
+            box-shadow:1px 1px 3px rgba(0,0,0,0.2);'
         >{num}</div>
         """
 
@@ -77,21 +77,21 @@ if st.session_state.lotto_numbers:
     full_html = f"""
         <div style='
             display:flex;
-            flex-wrap:wrap;
+            flex-wrap:nowrap;
             justify-content:center;
             align-items:center;
             text-align:center;
-            margin-top:20px;
-            padding:0 10px;
-            overflow:auto;
+            margin-top:10px;
+            padding:0 6px;
+            overflow-x:auto;
             max-width:100%;
         '>
             {html_balls}
-            <span style='font-size:28px; margin:0 12px; color:#e74c3c; font-weight:bold;'>+</span>
+            <span style='font-size:20px; margin:0 8px; color:#e74c3c; font-weight:bold;'>+</span>
             {html_bonus}
         </div>
     """
-    components.html(full_html, height=140)
+    components.html(full_html, height=100)
 ###
 
 ## 역대 최다 1등 당첨자 수
