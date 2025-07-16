@@ -24,6 +24,60 @@ df.rename(columns={
     "sales": "총 판매금액"
 }, inplace=True)
 
+### 로또번호 생성기 테스트
+import random
+
+st.subheader("🎲 랜덤 로또 번호 생성기")
+
+# 상태 저장용 key
+if "lotto_numbers" not in st.session_state:
+    st.session_state.lotto_numbers = []
+
+def generate_lotto():
+    main_nums = sorted(random.sample(range(1, 46), 6))
+    bonus = random.choice([n for n in range(1, 46) if n not in main_nums])
+    st.session_state.lotto_numbers = main_nums + [bonus]
+
+# 버튼 (컬러감 있게)
+st.markdown("<div style='text-align:center;'>", unsafe_allow_html=True)
+clicked = st.button("💡 로또 번호 뽑기", type="primary", use_container_width=False)
+st.markdown("</div>", unsafe_allow_html=True)
+
+if clicked:
+    generate_lotto()
+
+# 번호가 있는 경우 출력
+if st.session_state.lotto_numbers:
+    main = st.session_state.lotto_numbers[:6]
+    bonus = st.session_state.lotto_numbers[6]
+
+    def ball(num, color="#f1c40f"):
+        return f"""
+        <div style='
+            display:inline-block;
+            margin:6px;
+            width:60px;
+            height:60px;
+            border-radius:30px;
+            background:{color};
+            color:black;
+            font-weight:bold;
+            font-size:24px;
+            line-height:60px;
+            text-align:center;
+            box-shadow: 2px 2px 5px rgba(0,0,0,0.3);'
+        >{num}</div>
+        """
+
+    # 번호 보여주기
+    st.markdown("<div style='text-align:center;'>", unsafe_allow_html=True)
+    st.markdown("".join([ball(n) for n in main]), unsafe_allow_html=True)
+    st.markdown("<div style='font-size:16px; margin-top:8px;'>+ 보너스</div>", unsafe_allow_html=True)
+    st.markdown(ball(bonus, color="#e74c3c"), unsafe_allow_html=True)
+    st.markdown("</div>", unsafe_allow_html=True)
+
+###
+
 ## 역대 최다 1등 당첨자 수
 st.subheader("🏆 역대 최다 1등 당첨자 수")
 
