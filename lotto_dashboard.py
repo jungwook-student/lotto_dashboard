@@ -1,6 +1,7 @@
 import streamlit as st
 import pandas as pd
 import json
+import streamlit.components.v1 as components
 
 # JSON 파일 불러오기
 with open("lotto_100.json", "r", encoding="utf-8") as f:
@@ -73,13 +74,15 @@ if st.session_state.lotto_numbers:
     html_balls = "".join([ball(n, "#f1c40f") for n in main])
     html_bonus = ball(bonus, "#e74c3c")
 
-    st.markdown(f"""
+    full_html = f"""
         <div style='text-align:center; margin-top:20px;'>
             {html_balls}
             <span style='font-size:20px; margin:0 10px;'>+</span>
             {html_bonus}
         </div>
-    """, unsafe_allow_html=True)
+    """
+
+    components.html(full_html, height=120)  # height 조절 가능
 ###
 
 ## 역대 최다 1등 당첨자 수
