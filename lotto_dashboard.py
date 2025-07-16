@@ -34,9 +34,13 @@ max_round = int(max_row["회차"])
 total_prize = int(max_row["1등 총 당첨금"])
 per_person_prize = int(max_row["1등 당첨금"])
 
-# 메인 숫자 강조 (전광판 스타일)
+# 전광판 숫자 + 단위 '명' 작게 표시
 st.markdown(
-    f"<h1 style='text-align:center; font-size:96px; margin-bottom:0px;'>{max_winners} 명</h1>",
+    f"""
+    <h1 style='text-align:center; font-size:96px; margin-bottom:0px;'>
+        {max_winners}<span style='font-size:36px;'>명</span>
+    </h1>
+    """,
     unsafe_allow_html=True
 )
 
@@ -53,6 +57,44 @@ st.markdown(
 )
 ###
 
+### 최다 출현 번호
+st.subheader("🔢 가장 많이 출현한 번호")
+
+from collections import Counter
+import ast
+
+# 문자열 → 리스트 변환 처리
+if "numbers" in df.columns and isinstance(df["numbers"].iloc[0], str):
+    df["numbers"] = df["numbers"].apply(ast.literal_eval)
+
+if "numbers" in df.columns and isinstance(df["numbers"].iloc[0], list):
+    all_numbers = sum(df["numbers"], [])
+    counter = Counter(all_numbers)
+    most_common_num, count = counter.most_common(1)[0]
+
+    # 숫자 전광판 스타일로, '번' 작게 붙이기
+    st.markdown(
+        f"""
+        <h1 style='text-align:center; font-size:96px; margin-bottom:0px;'>
+            {most_common_num}<span style='font-size:36px;'>번</span>
+        </h1>
+        """,
+        unsafe_allow_html=True
+    )
+
+    # 설명 텍스트
+    st.markdown(
+        f"""
+        <div style='text-align:center; font-size:18px; margin-top:5px; line-height:1.6;'>
+            총 출현 횟수: {count}회<br>
+            분석 대상 회차: 최근 {len(df)}회차
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
+else:
+    st.warning("numbers 데이터가 없거나 올바른 형식이 아닙니다.")
+###
 
 st.subheader("📈 1등 당첨금 추이 (회차 기준)")
 st.line_chart(df.set_index("회차")[["1등 당첨금"]])
@@ -76,44 +118,6 @@ counter = Counter(all_numbers)
 
 freq_df = pd.DataFrame(counter.items(), columns=["번호", "출현 빈도"]).sort_values(by="출현 빈도", ascending=False)
 st.bar_chart(freq_df.set_index("번호"))
-
-
-
-### 최다 출현번호
-st.subheader("🔢 가장 많이 출현한 번호")
-
-from collections import Counter
-import ast
-
-# 문자열로 저장된 경우 안전하게 변환
-if "numbers" in df.columns and isinstance(df["numbers"].iloc[0], str):
-    df["numbers"] = df["numbers"].apply(ast.literal_eval)
-
-# numbers 필드가 제대로 있는지 체크
-if "numbers" in df.columns and isinstance(df["numbers"].iloc[0], list):
-    all_numbers = sum(df["numbers"], [])
-    counter = Counter(all_numbers)
-    most_common_num, count = counter.most_common(1)[0]
-
-    # 숫자 크게 강조
-    st.markdown(
-        f"<h1 style='text-align:center; font-size:96px; margin-bottom:0px;'>{most_common_num}</h1>",
-        unsafe_allow_html=True
-    )
-
-    # 설명
-    st.markdown(
-        f"""
-        <div style='text-align:center; font-size:18px; margin-top:5px; line-height:1.6;'>
-            총 출현 횟수: {count}회<br>
-            분석 대상 회차: 최근 {len(df)}회차
-        </div>
-        """,
-        unsafe_allow_html=True
-    )
-else:
-    st.warning("numbers 데이터가 없거나 올바른 형식이 아닙니다.")
-###
 
 st.subheader("📋 전체 원시 데이터 보기")
 st.dataframe(df, use_container_width=True)
