@@ -224,5 +224,5 @@ counter = Counter(all_numbers)
 freq_df = pd.DataFrame(counter.items(), columns=["번호", "출현 빈도"]).sort_values(by="출현 빈도", ascending=False)
 st.bar_chart(freq_df.set_index("번호"))
 
-st.subheader("📋 전체 원시 데이터 보기")
+st.subheader("📋 당첨 히스토리")
 st.dataframe(df, use_container_width=True)
