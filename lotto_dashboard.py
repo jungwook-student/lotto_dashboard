@@ -47,5 +47,34 @@ counter = Counter(all_numbers)
 freq_df = pd.DataFrame(counter.items(), columns=["번호", "출현 빈도"]).sort_values(by="출현 빈도", ascending=False)
 st.bar_chart(freq_df.set_index("번호"))
 
+## 역대 최다 1등 당첨자 수
+st.subheader("🏆 역대 최다 1등 당첨자 수")
+
+# 가장 많은 1등 당첨자 수 가진 회차 데이터 추출
+max_row = df.loc[df["1등 당첨자 수"].idxmax()]
+max_winners = int(max_row["1등 당첨자 수"])
+max_round = int(max_row["회차"])
+total_prize = int(max_row["1등 총 당첨금"])
+per_person_prize = int(max_row["1등 당첨금"])
+
+# 메인 숫자 강조 (전광판 스타일)
+st.markdown(
+    f"<h1 style='text-align:center; font-size:96px; margin-bottom:0px;'>{max_winners}</h1>",
+    unsafe_allow_html=True
+)
+
+# 부가 정보 (중앙 정렬, 작게)
+st.markdown(
+    f"""
+    <div style='text-align:center; font-size:18px; margin-top:5px; line-height:1.6;'>
+        {max_round}회차<br>
+        1등 총 당첨금: {total_prize:,}원<br>
+        1인당 당첨금: {per_person_prize:,}원
+    </div>
+    """,
+    unsafe_allow_html=True
+)
+###
+
 st.subheader("📋 전체 원시 데이터 보기")
 st.dataframe(df, use_container_width=True)
