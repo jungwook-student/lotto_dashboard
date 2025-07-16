@@ -82,30 +82,34 @@ st.subheader("🔢 가장 많이 출현한 번호")
 from collections import Counter
 import ast
 
-# 문자열로 저장된 경우 리스트로 변환
-if isinstance(df["numbers"].iloc[0], str):
+# 문자열로 저장된 경우 안전하게 변환
+if "numbers" in df.columns and isinstance(df["numbers"].iloc[0], str):
     df["numbers"] = df["numbers"].apply(ast.literal_eval)
 
-all_numbers = sum(df["numbers"], [])
-counter = Counter(all_numbers)
-most_common_num, count = counter.most_common(1)[0]
+# numbers 필드가 제대로 있는지 체크
+if "numbers" in df.columns and isinstance(df["numbers"].iloc[0], list):
+    all_numbers = sum(df["numbers"], [])
+    counter = Counter(all_numbers)
+    most_common_num, count = counter.most_common(1)[0]
 
-# 메인 숫자 (크게 강조)
-st.markdown(
-    f"<h1 style='text-align:center; font-size:96px; margin-bottom:0px;'>{most_common_num}</h1>",
-    unsafe_allow_html=True
-)
+    # 숫자 크게 강조
+    st.markdown(
+        f"<h1 style='text-align:center; font-size:96px; margin-bottom:0px;'>{most_common_num}</h1>",
+        unsafe_allow_html=True
+    )
 
-# 부가 설명 (아래에 소제목처럼)
-st.markdown(
-    f"""
-    <div style='text-align:center; font-size:18px; margin-top:5px; line-height:1.6;'>
-        총 출현 횟수: {count}회<br>
-        분석 대상 회차: 최근 {len(df)}회차
-    </div>
-    """,
-    unsafe_allow_html=True
-)
+    # 설명
+    st.markdown(
+        f"""
+        <div style='text-align:center; font-size:18px; margin-top:5px; line-height:1.6;'>
+            총 출현 횟수: {count}회<br>
+            분석 대상 회차: 최근 {len(df)}회차
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
+else:
+    st.warning("numbers 데이터가 없거나 올바른 형식이 아닙니다.")
 ###
 
 st.subheader("📋 전체 원시 데이터 보기")
