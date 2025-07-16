@@ -71,27 +71,27 @@ if st.session_state.lotto_numbers:
         >{num}</div>
         """
 
-html_balls = "".join([ball(n, "#f1c40f") for n in main])
-html_bonus = ball(bonus, "#e74c3c")
+    html_balls = "".join([ball(n, "#f1c40f") for n in main])
+    html_bonus = ball(bonus, "#e74c3c")
 
-full_html = f"""
-    <div style='
-        display:flex;
-        flex-wrap:wrap;
-        justify-content:center;
-        align-items:center;
-        text-align:center;
-        margin-top:20px;
-        padding:0 10px;
-        overflow:auto;
-        max-width:100%;
-    '>
-        {html_balls}
-        <span style='font-size:28px; margin:0 12px; color:#e74c3c; font-weight:bold;'>+</span>
-        {html_bonus}
-    </div>
-"""
-components.html(full_html, height=140)
+    full_html = f"""
+        <div style='
+            display:flex;
+            flex-wrap:wrap;
+            justify-content:center;
+            align-items:center;
+            text-align:center;
+            margin-top:20px;
+            padding:0 10px;
+            overflow:auto;
+            max-width:100%;
+        '>
+            {html_balls}
+            <span style='font-size:28px; margin:0 12px; color:#e74c3c; font-weight:bold;'>+</span>
+            {html_bonus}
+        </div>
+    """
+    components.html(full_html, height=140)
 ###
 
 ## 역대 최다 1등 당첨자 수
