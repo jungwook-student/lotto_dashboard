@@ -54,35 +54,44 @@ if st.session_state.lotto_numbers:
     bonus = st.session_state.lotto_numbers[6]
 
     def ball(num, color):
-        return f"""
-        <div style='
-            display:inline-block;
-            margin:8px;
-            width:70px;
-            height:70px;
-            border-radius:35px;
-            background:{color};
-            color:#000;
-            font-weight:bold;
-            font-size:28px;
-            line-height:70px;
-            text-align:center;
-            box-shadow:2px 2px 5px rgba(0,0,0,0.3);'
-        >{num}</div>
-        """
-
-    html_balls = "".join([ball(n, "#f1c40f") for n in main])
-    html_bonus = ball(bonus, "#e74c3c")
-
-    full_html = f"""
-        <div style='text-align:center; margin-top:20px;'>
-            {html_balls}
-            <span style='font-size:36px; margin:0 15px; color:#e74c3c; font-weight:bold;'>+</span>
-            {html_bonus}
-        </div>
+    return f"""
+    <div style='
+        display:inline-flex;
+        justify-content:center;
+        align-items:center;
+        margin:6px;
+        width:60px;
+        height:60px;
+        border-radius:30px;
+        background:{color};
+        color:#000;
+        font-weight:bold;
+        font-size:22px;
+        box-shadow:2px 2px 5px rgba(0,0,0,0.3);'
+    >{num}</div>
     """
 
-    components.html(full_html, height=120)  # height 조절 가능
+html_balls = "".join([ball(n, "#f1c40f") for n in main])
+html_bonus = ball(bonus, "#e74c3c")
+
+full_html = f"""
+    <div style='
+        display:flex;
+        flex-wrap:wrap;
+        justify-content:center;
+        align-items:center;
+        text-align:center;
+        margin-top:20px;
+        padding:0 10px;
+    '>
+        {html_balls}
+        <span style='font-size:28px; margin:0 12px; color:#e74c3c; font-weight:bold;'>+</span>
+        {html_bonus}
+    </div>
+"""
+
+import streamlit.components.v1 as components
+components.html(full_html, height=150)
 ###
 
 ## 역대 최다 1등 당첨자 수
