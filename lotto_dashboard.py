@@ -8,10 +8,10 @@ with open("lotto_100.json", "r", encoding="utf-8") as f:
     data = json.load(f)
 df = pd.DataFrame(data)
 
-st.set_page_config(page_title="로또 통계 대시보드", layout="wide")
+st.set_page_config(page_title="AI 로또 분석 - LOTTO 6/45", layout="wide")
 
-st.title("🎯 로또 통계 대시보드")
-st.caption("최근 100개 회차 기준 | 동행복권 API 기반")
+st.title("🎲 AI 로또 분석 - LOTTO 6/45")
+## st.caption("최근 100개 회차 기준 | 동행복권 API 기반")
 
 # 회차 기준 내림차순 정렬
 df = df.sort_values(by="round", ascending=False)
@@ -77,7 +77,7 @@ if st.session_state.lotto_numbers:
     full_html = f"""
         <div style='text-align:center; margin-top:20px;'>
             {html_balls}
-            <span style='font-size:20px; margin:0 10px;'>+</span>
+            <span style='font-size:36px; margin:0 15px; color:#e74c3c; font-weight:bold;'>+</span>
             {html_bonus}
         </div>
     """
