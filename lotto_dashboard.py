@@ -83,15 +83,15 @@ full_html = f"""
         text-align:center;
         margin-top:20px;
         padding:0 10px;
+        overflow:auto;
+        max-width:100%;
     '>
         {html_balls}
         <span style='font-size:28px; margin:0 12px; color:#e74c3c; font-weight:bold;'>+</span>
         {html_bonus}
     </div>
 """
-
-import streamlit.components.v1 as components
-components.html(full_html, height=150)
+components.html(full_html, height=140)
 ###
 
 ## 역대 최다 1등 당첨자 수
