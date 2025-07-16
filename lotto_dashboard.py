@@ -30,6 +30,7 @@ import random
 
 st.subheader("🎲 랜덤 로또 번호 생성기")
 
+# 상태 초기화
 if "lotto_numbers" not in st.session_state:
     st.session_state.lotto_numbers = []
 
@@ -38,14 +39,52 @@ def generate_lotto():
     bonus = random.choice([n for n in range(1, 46) if n not in main])
     st.session_state.lotto_numbers = main + [bonus]
 
-if st.button("💡 로또 번호 뽑기"):
+# 버튼
+st.markdown("<div style='text-align:center;'>", unsafe_allow_html=True)
+clicked = st.button("💡 로또 번호 뽑기", type="primary")
+st.markdown("</div>", unsafe_allow_html=True)
+
+if clicked:
     generate_lotto()
 
+# 출력 블럭
 if st.session_state.lotto_numbers:
     main = st.session_state.lotto_numbers[:6]
     bonus = st.session_state.lotto_numbers[6]
 
-    st.write("번호:", main, "+ 보너스:", bonus)
+    # 공 스타일
+    def ball(num, color):
+        return f"""
+        <div style='
+            display:inline-block;
+            margin:8px;
+            width:70px;
+            height:70px;
+            border-radius:35px;
+            background:{color};
+            color:#000;
+            font-weight:bold;
+            font-size:28px;
+            line-height:70px;
+            text-align:center;
+            box-shadow:2px 2px 5px rgba(0,0,0,0.3);'
+        >{num}</div>
+        """
+
+    # 출력
+    st.markdown("<div style='text-align:center; margin-top:20px;'>", unsafe_allow_html=True)
+
+    # 메인 번호들 (노란 공)
+    for n in main:
+        st.markdown(ball(n, "#f1c40f"), unsafe_allow_html=True)
+
+    # 보너스 구분자
+    st.markdown("<span style='font-size:20px; margin:0 10px;'>+</span>", unsafe_allow_html=True)
+
+    # 보너스 번호 (빨간 공)
+    st.markdown(ball(bonus, "#e74c3c"), unsafe_allow_html=True)
+
+    st.markdown("</div>", unsafe_allow_html=True)
 ###
 
 ## 역대 최다 1등 당첨자 수
