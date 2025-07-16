@@ -53,45 +53,80 @@ if st.session_state.lotto_numbers:
     main = st.session_state.lotto_numbers[:6]
     bonus = st.session_state.lotto_numbers[6]
 
-    def ball(num, color):
-        return f"""
-        <div style='
-            display:inline-flex;
-            justify-content:center;
-            align-items:center;
-            margin:4px;
-            width:42px;
-            height:42px;
-            border-radius:21px;
-            background:{color};
-            color:#000;
-            font-weight:bold;
-            font-size:18px;
-            box-shadow:1px 1px 3px rgba(0,0,0,0.2);'
-        >{num}</div>
-        """
+    def ball_html(num, color):
+        return f"<div class='ball' style='background:{color};'>{num}</div>"
 
-    html_balls = "".join([ball(n, "#f1c40f") for n in main])
-    html_bonus = ball(bonus, "#e74c3c")
+    html_balls = "".join([ball_html(n, "#f1c40f") for n in main])
+    html_bonus = ball_html(bonus, "#e74c3c")
 
-    full_html = f"""
-        <div style='
-            display:flex;
-            flex-wrap:nowrap;
-            justify-content:center;
-            align-items:center;
-            text-align:center;
-            margin-top:10px;
-            padding:0 6px;
-            overflow-x:auto;
-            max-width:100%;
-        '>
-            {html_balls}
-            <span style='font-size:20px; margin:0 8px; color:#e74c3c; font-weight:bold;'>+</span>
-            {html_bonus}
-        </div>
+    responsive_html = f"""
+    <style>
+        .ball {{
+            display: inline-flex;
+            justify-content: center;
+            align-items: center;
+            margin: 6px;
+            width: 60px;
+            height: 60px;
+            border-radius: 30px;
+            background: #ccc;
+            color: #000;
+            font-weight: bold;
+            font-size: 22px;
+            box-shadow: 2px 2px 5px rgba(0,0,0,0.3);
+        }}
+        .lotto-container {{
+            display: flex;
+            flex-wrap: nowrap;
+            justify-content: center;
+            align-items: center;
+            overflow-x: auto;
+            padding: 0 10px;
+        }}
+        .plus {{
+            font-size: 28px;
+            margin: 0 12px;
+            color: #e74c3c;
+            font-weight: bold;
+        }}
+        /* 태블릿 이하 */
+        @media (max-width: 768px) {{
+            .ball {{
+                width: 48px;
+                height: 48px;
+                border-radius: 24px;
+                font-size: 18px;
+                margin: 4px;
+            }}
+            .plus {{
+                font-size: 24px;
+                margin: 0 8px;
+            }}
+        }}
+        /* 모바일 세로 */
+        @media (max-width: 480px) {{
+            .ball {{
+                width: 38px;
+                height: 38px;
+                border-radius: 19px;
+                font-size: 16px;
+                margin: 3px;
+            }}
+            .plus {{
+                font-size: 20px;
+                margin: 0 6px;
+            }}
+        }}
+    </style>
+
+    <div class="lotto-container">
+        {html_balls}
+        <span class="plus">+</span>
+        {html_bonus}
+    </div>
     """
-    components.html(full_html, height=100)
+
+    components.html(responsive_html, height=140)
 ###
 
 ## 역대 최다 1등 당첨자 수
