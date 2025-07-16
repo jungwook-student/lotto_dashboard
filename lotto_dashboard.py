@@ -54,22 +54,22 @@ if st.session_state.lotto_numbers:
     bonus = st.session_state.lotto_numbers[6]
 
     def ball(num, color):
-    return f"""
-    <div style='
-        display:inline-flex;
-        justify-content:center;
-        align-items:center;
-        margin:6px;
-        width:60px;
-        height:60px;
-        border-radius:30px;
-        background:{color};
-        color:#000;
-        font-weight:bold;
-        font-size:22px;
-        box-shadow:2px 2px 5px rgba(0,0,0,0.3);'
-    >{num}</div>
-    """
+        return f"""
+        <div style='
+            display:inline-flex;
+            justify-content:center;
+            align-items:center;
+            margin:6px;
+            width:60px;
+            height:60px;
+            border-radius:30px;
+            background:{color};
+            color:#000;
+            font-weight:bold;
+            font-size:22px;
+            box-shadow:2px 2px 5px rgba(0,0,0,0.3);'
+        >{num}</div>
+        """
 
 html_balls = "".join([ball(n, "#f1c40f") for n in main])
 html_bonus = ball(bonus, "#e74c3c")
