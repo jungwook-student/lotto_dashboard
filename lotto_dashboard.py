@@ -24,21 +24,14 @@ df.rename(columns={
     "sales": "총 판매금액"
 }, inplace=True)
 
-# 차트 탭 구성
-tab1, tab2, tab3 = st.tabs(["📈 1등 당첨금 추이", "🏆 당첨자 수 및 판매금", "📋 데이터 테이블"])
+st.subheader("📈 1등 당첨금 추이 (회차 기준)")
+st.line_chart(df.set_index("회차")[["1등 당첨금"]])
 
-with tab1:
-    st.subheader("1등 당첨금 추이 (회차 기준)")
-    st.line_chart(df.set_index("회차")[["1등 당첨금"]])
+st.subheader("🏆 1등 당첨자 수")
+st.bar_chart(df.set_index("회차")[["1등 당첨자 수"]])
 
-with tab2:
-    st.subheader("1등 당첨자 수 & 총 판매금액 (회차 기준)")
-    col1, col2 = st.columns(2)
-    with col1:
-        st.bar_chart(df.set_index("회차")[["1등 당첨자 수"]])
-    with col2:
-        st.line_chart(df.set_index("회차")[["총 판매금액"]])
+st.subheader("💰 총 판매금액")
+st.line_chart(df.set_index("회차")[["총 판매금액"]])
 
-with tab3:
-    st.subheader("📋 전체 원시 데이터 보기")
-    st.dataframe(df, use_container_width=True)
+st.subheader("📋 전체 원시 데이터 보기")
+st.dataframe(df, use_container_width=True)
