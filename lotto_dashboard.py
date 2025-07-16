@@ -35,15 +35,16 @@ st.line_chart(df.set_index("회차")[["총 판매금액"]])
 
 st.subheader("🔢 당첨번호 분포 (출현 빈도순)")
 
-# 모든 회차의 당첨번호를 하나의 리스트로 합치기
+# 문자열로 저장된 경우 리스트로 변환
+import ast
+if isinstance(df["numbers"].iloc[0], str):
+    df["numbers"] = df["numbers"].apply(ast.literal_eval)
+
 from collections import Counter
-all_numbers = sum(df["numbers"], [])  # 리스트 안 리스트 → 평탄화
+all_numbers = sum(df["numbers"], [])  # 리스트 평탄화
 counter = Counter(all_numbers)
 
-# 데이터프레임 변환 후 정렬
 freq_df = pd.DataFrame(counter.items(), columns=["번호", "출현 빈도"]).sort_values(by="출현 빈도", ascending=False)
-
-# 그래프 출력
 st.bar_chart(freq_df.set_index("번호"))
 
 st.subheader("📋 전체 원시 데이터 보기")
