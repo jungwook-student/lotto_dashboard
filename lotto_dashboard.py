@@ -52,7 +52,6 @@ if st.session_state.lotto_numbers:
     main = st.session_state.lotto_numbers[:6]
     bonus = st.session_state.lotto_numbers[6]
 
-    # 공 스타일
     def ball(num, color):
         return f"""
         <div style='
@@ -71,20 +70,16 @@ if st.session_state.lotto_numbers:
         >{num}</div>
         """
 
-    # 출력
-    st.markdown("<div style='text-align:center; margin-top:20px;'>", unsafe_allow_html=True)
+    html_balls = "".join([ball(n, "#f1c40f") for n in main])
+    html_bonus = ball(bonus, "#e74c3c")
 
-    # 메인 번호들 (노란 공)
-    for n in main:
-        st.markdown(ball(n, "#f1c40f"), unsafe_allow_html=True)
-
-    # 보너스 구분자
-    st.markdown("<span style='font-size:20px; margin:0 10px;'>+</span>", unsafe_allow_html=True)
-
-    # 보너스 번호 (빨간 공)
-    st.markdown(ball(bonus, "#e74c3c"), unsafe_allow_html=True)
-
-    st.markdown("</div>", unsafe_allow_html=True)
+    st.markdown(f"""
+        <div style='text-align:center; margin-top:20px;'>
+            {html_balls}
+            <span style='font-size:20px; margin:0 10px;'>+</span>
+            {html_bonus}
+        </div>
+    """, unsafe_allow_html=True)
 ###
 
 ## 역대 최다 1등 당첨자 수
