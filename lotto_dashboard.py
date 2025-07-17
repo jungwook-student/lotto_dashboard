@@ -40,7 +40,7 @@ df.rename(columns={
 
 ### 최신회차 
 # 최신 회차 기준 데이터
-latest = df.loc[df["round"].idxmax()]  # 또는 "회차"가 아니라 "round"이면
+latest = df.loc[df["회차"].idxmax()]  # 또는 "회차"가 아니라 "round"이면
 
 latest_round = int(latest["round"])
 numbers = latest["numbers"]
