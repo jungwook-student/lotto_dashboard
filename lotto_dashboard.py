@@ -8,9 +8,9 @@ with open("lotto_100.json", "r", encoding="utf-8") as f:
     data = json.load(f)
 df = pd.DataFrame(data)
 
-st.set_page_config(page_title="AI 로또 분석 - LOTTO 6/45", layout="wide")
+st.set_page_config(page_title="로또 분석 - LOTTO 6/45🎲", layout="wide")
 
-st.title("🎲 AI 로또 분석 - LOTTO 6/45")
+st.title("로또 분석 - LOTTO 6/45🎲")
 ## st.caption("최근 100개 회차 기준 | 동행복권 API 기반")
 
 # 회차 기준 내림차순 정렬
