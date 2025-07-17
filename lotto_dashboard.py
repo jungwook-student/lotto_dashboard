@@ -3,15 +3,16 @@ import pandas as pd
 import json
 import streamlit.components.v1 as components
 
+GA_TRACKING_ID = "G-HV98N97M8G"  # 본인의 실제 ID로 교체
+
 components.html(f"""
 <!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-HV98N97M8G"></script>
+<script async src="https://www.googletagmanager.com/gtag/js?id={GA_TRACKING_ID}"></script>
 <script>
   window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
+  function gtag(){{dataLayer.push(arguments);}}
   gtag('js', new Date());
-
-  gtag('config', 'G-HV98N97M8G');
+  gtag('config', '{GA_TRACKING_ID}');
 </script>
 """, height=0)
 
