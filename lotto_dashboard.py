@@ -2,6 +2,13 @@ import streamlit as st
 import pandas as pd
 import json
 import streamlit.components.v1 as components
+import folium
+
+from streamlit_folium import st_folium
+import random
+
+from collections import Counter
+import ast
 
 # JSON 파일 불러오기
 with open("lotto_100.json", "r", encoding="utf-8") as f:
@@ -67,35 +74,47 @@ st.markdown(
 
 ### 최신회차 1등 판매점
 
-# JSON 데이터 불러오기
+# ✅ JSON 파일 로드
 with open("lotto_store_data.json", "r", encoding="utf-8") as f:
     data = json.load(f)
 
-# 회차 리스트 추출 및 선택
+# ✅ 회차 선택
 rounds = sorted(set(item["round"] for item in data), reverse=True)
 selected_round = st.selectbox("회차 선택", rounds)
 
-# 선택된 회차에 해당하는 판매점 출력
-st.write(f"### {selected_round}회차 1등 배출 판매점")
+# ✅ 선택 회차 필터링
+stores = [item for item in data if item["round"] == selected_round and item["lat"] and item["lng"]]
 
-filtered = [item for item in data if item["round"] == selected_round]
-for item in filtered:
-    # 구매 방식에 따라 아이콘 선택
-    if "수동" in item["method"]:
-        icon = "✍️"
-    elif "반자동" in item["method"]:
-        icon = "⚙️"
-    else:
-        icon = "🎯"  # 자동
+# ✅ 지도의 중심 좌표 (기본값: 서울시청)
+if stores:
+    center_lat = stores[0]["lat"]
+    center_lng = stores[0]["lng"]
+else:
+    center_lat = 37.5665
+    center_lng = 126.9780
 
-    st.markdown(f"""
-- 🏪 **{item['store']}** ({icon} {item['method']})  
-📍 {item['address']}
-""")
+# ✅ 지도 초기화
+m = folium.Map(location=[center_lat, center_lng], zoom_start=11)
+
+# ✅ 마커 추가
+for s in stores:
+    popup_html = f"""
+    <b>{s['store']}</b><br>
+    {s['address']}<br>
+    ({s['method']})
+    """
+    icon = "blue" if "자동" in s["method"] else "red"
+    folium.Marker(
+        location=[s["lat"], s["lng"]],
+        popup=popup_html,
+        icon=folium.Icon(color=icon)
+    ).add_to(m)
+
+# ✅ Streamlit에 지도 표시
+st.subheader(f"🗺️ {selected_round}회차 1등 판매점 지도")
+st_folium(m, width=700, height=500)
 
 ### 로또번호 생성기 테스트
-import streamlit as st
-import random
 
 st.subheader("🎲 랜덤 로또 번호 생성기")
 
@@ -233,9 +252,6 @@ st.markdown(
 ### 최다 출현 번호
 st.subheader("🔢 가장 많이 출현한 번호")
 
-from collections import Counter
-import ast
-
 # 문자열 → 리스트 변환 처리
 if "numbers" in df.columns and isinstance(df["numbers"].iloc[0], str):
     df["numbers"] = df["numbers"].apply(ast.literal_eval)
@@ -281,11 +297,11 @@ st.line_chart(df.set_index("회차")[["총 판매금액"]])
 st.subheader("🔢 당첨번호 분포 (출현 빈도순)")
 
 # 문자열로 저장된 경우 리스트로 변환
-import ast
+
 if isinstance(df["numbers"].iloc[0], str):
     df["numbers"] = df["numbers"].apply(ast.literal_eval)
 
-from collections import Counter
+
 all_numbers = sum(df["numbers"], [])  # 리스트 평탄화
 counter = Counter(all_numbers)
 
