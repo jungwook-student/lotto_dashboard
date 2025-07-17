@@ -53,9 +53,10 @@ st.write(f"### {selected_round}회차 1등 배출 판매점")
 
 filtered = [item for item in data if item["round"] == selected_round]
 for item in filtered:
-    st.markdown(f"- 🏪 **{item['store']}** ({item['method']})  
-      📍 {item['address']}")
-###
+    st.markdown(f"""
+- 🏪 **{item['store']}** ({item['method']})  
+📍 {item['address']}
+""")
 
 ### 로또번호 생성기 테스트
 import streamlit as st
