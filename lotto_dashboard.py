@@ -112,7 +112,7 @@ st.subheader(f"🗺️ {selected_round}회차 1등 판매점 지도")
 
 st.markdown("""
 <style>
-iframe {
+iframe[src*="leaflet"] {
     height: 400px !important;
     max-height: 400px;
     min-height: 400px;
