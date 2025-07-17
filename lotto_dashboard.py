@@ -53,8 +53,16 @@ st.write(f"### {selected_round}회차 1등 배출 판매점")
 
 filtered = [item for item in data if item["round"] == selected_round]
 for item in filtered:
+    # 구매 방식에 따라 아이콘 선택
+    if "수동" in item["method"]:
+        icon = "✍️"
+    elif "반자동" in item["method"]:
+        icon = "⚙️"
+    else:
+        icon = "🎯"  # 자동
+
     st.markdown(f"""
-- 🏪 **{item['store']}** ({item['method']})  
+- 🏪 **{item['store']}** ({icon} {item['method']})  
 📍 {item['address']}
 """)
 
