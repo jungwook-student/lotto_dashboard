@@ -3,6 +3,16 @@ import pandas as pd
 import json
 import streamlit.components.v1 as components
 
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-HV98N97M8G"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-HV98N97M8G');
+</script>
+
 # JSON 파일 불러오기
 with open("lotto_100.json", "r", encoding="utf-8") as f:
     data = json.load(f)
