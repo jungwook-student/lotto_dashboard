@@ -85,34 +85,31 @@ selected_round = st.selectbox("회차 선택", rounds)
 # ✅ 선택 회차 필터링
 stores = [item for item in data if item["round"] == selected_round and item["lat"] and item["lng"]]
 
-# ✅ 지도의 중심 좌표 (기본값: 서울시청)
-if stores:
-    center_lat = stores[0]["lat"]
-    center_lng = stores[0]["lng"]
-else:
-    center_lat = 37.5665
-    center_lng = 126.9780
+# ✅ 지도의 중심 좌표 (기본값: 청담에테르노)
+center_lat = 37.527770011
+center_lng = 127.051240341
 
 # ✅ 지도 초기화
-m = folium.Map(location=[center_lat, center_lng], zoom_start=11)
+m = folium.Map(location=[center_lat, center_lng], zoom_start=7)
 
 # ✅ 마커 추가
 for s in stores:
-    popup_html = f"""
+    popup_content = f"""
     <b>{s['store']}</b><br>
-    {s['address']}<br>
-    ({s['method']})
+    📍 {s['address']}<br>
+    🛒 {s['method']}
     """
+    popup = folium.Popup(folium.IFrame(popup_content, width=200, height=100), max_width=250)
     icon = "blue" if "자동" in s["method"] else "red"
     folium.Marker(
         location=[s["lat"], s["lng"]],
-        popup=popup_html,
+        popup=popup,
         icon=folium.Icon(color=icon)
     ).add_to(m)
 
 # ✅ Streamlit에 지도 표시
 st.subheader(f"🗺️ {selected_round}회차 1등 판매점 지도")
-st_folium(m, width=700, height=500)
+st_folium(m, width=700, height=450)
 
 ### 로또번호 생성기 테스트
 
