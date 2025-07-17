@@ -40,20 +40,17 @@ df.rename(columns={
 
 ### 최신회차 
 # 최신 회차 기준 데이터
-latest = df.loc[df["회차"].idxmax()]  # 또는 "회차"가 아니라 "round"이면
-
-latest_round = int(latest["round"])
+latest = df.loc[df["회차"].idxmax()]
+latest_round = int(latest["회차"])
 numbers = latest["numbers"]
 bonus = latest["bonus"]
-first_prize = int(latest["first_prize"])
-first_total = int(latest["first_total_prize"])
-winner_count = int(latest["first_winner_count"])
+first_prize = int(latest["1등 당첨금"])
+first_total = int(latest["1등 총 당첨금"])
+winner_count = int(latest["1등 당첨자 수"])
 
-# 억 단위 변환 함수
 def to_eok(value):
     return f"{value / 100_000_000:.1f}억"
 
-# 출력
 st.subheader(f"🎯 {latest_round}회 당첨 결과")
 
 st.markdown(
