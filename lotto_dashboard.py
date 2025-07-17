@@ -38,6 +38,25 @@ df.rename(columns={
     "sales": "총 판매금액"
 }, inplace=True)
 
+### 최신회차 1등 판매점
+
+# JSON 데이터 불러오기
+with open("lotto_store_data.json", "r", encoding="utf-8") as f:
+    data = json.load(f)
+
+# 회차 리스트 추출 및 선택
+rounds = sorted(set(item["round"] for item in data), reverse=True)
+selected_round = st.selectbox("회차 선택", rounds)
+
+# 선택된 회차에 해당하는 판매점 출력
+st.write(f"### {selected_round}회차 1등 배출 판매점")
+
+filtered = [item for item in data if item["round"] == selected_round]
+for item in filtered:
+    st.markdown(f"- 🏪 **{item['store']}** ({item['method']})  
+      📍 {item['address']}")
+###
+
 ### 로또번호 생성기 테스트
 import streamlit as st
 import random
