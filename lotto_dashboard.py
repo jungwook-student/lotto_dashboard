@@ -51,12 +51,15 @@ winner_count = int(latest["1등 당첨자 수"])
 def to_eok(value):
     return f"{value / 100_000_000:.1f}억"
 
+taxed_prize = int(first_prize * 0.78)
+
 st.subheader(f"🎯 {latest_round}회 당첨 결과")
 
 st.markdown(
     f"""
     - 🎲 **번호**: {', '.join(map(str, numbers))} + 보너스 {bonus}  
-    - 💰 **1인당 당첨금**: {to_eok(first_prize)}  
+    - 💰 **1인당 당첨금**: {to_eok(first_prize)} 
+    - 💸 **실수령액 (세후)**: {to_eok(taxed_prize) 
     - 👥 **당첨자 수**: {winner_count}명 / 총 당첨금: {to_eok(first_total)}
     """
 )
