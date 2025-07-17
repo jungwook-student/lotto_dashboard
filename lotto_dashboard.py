@@ -109,7 +109,19 @@ for s in stores:
 
 # ✅ Streamlit에 지도 표시
 st.subheader(f"🗺️ {selected_round}회차 1등 판매점 지도")
-st_folium(m, width=700, height=450)
+
+st.markdown("""
+<style>
+iframe {
+    height: 400px !important;
+    max-height: 400px;
+    min-height: 400px;
+    margin-bottom: -30px;
+}
+</style>
+""", unsafe_allow_html=True)
+
+st_folium(m, width=600, height=400)
 
 ### 로또번호 생성기 테스트
 
