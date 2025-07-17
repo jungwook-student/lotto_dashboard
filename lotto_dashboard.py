@@ -3,6 +3,16 @@ import pandas as pd
 import json
 import streamlit.components.v1 as components
 
+# JSON 파일 불러오기
+with open("lotto_100.json", "r", encoding="utf-8") as f:
+    data = json.load(f)
+df = pd.DataFrame(data)
+
+st.set_page_config(page_title="로또 분석 - LOTTO 6/45🎲", layout="wide")
+
+st.title("로또 분석 - LOTTO 6/45🎲")
+## st.caption("최근 100개 회차 기준 | 동행복권 API 기반")
+
 GA_TRACKING_ID = "G-HV98N97M8G"  # 본인의 실제 ID로 교체
 
 components.html(f"""
@@ -15,16 +25,6 @@ components.html(f"""
   gtag('config', '{GA_TRACKING_ID}');
 </script>
 """, height=0)
-
-# JSON 파일 불러오기
-with open("lotto_100.json", "r", encoding="utf-8") as f:
-    data = json.load(f)
-df = pd.DataFrame(data)
-
-st.set_page_config(page_title="로또 분석 - LOTTO 6/45🎲", layout="wide")
-
-st.title("로또 분석 - LOTTO 6/45🎲")
-## st.caption("최근 100개 회차 기준 | 동행복권 API 기반")
 
 # 회차 기준 내림차순 정렬
 df = df.sort_values(by="round", ascending=False)
