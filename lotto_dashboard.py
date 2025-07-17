@@ -59,7 +59,7 @@ st.markdown(
     f"""
     - 🎲 **번호**: {', '.join(map(str, numbers))} + 보너스 {bonus}  
     - 💰 **1인당 당첨금**: {to_eok(first_prize)}
-    - 💸 **실수령액 (세후)**: {to_eok(taxed_prize)
+    - 💸 **실수령액 (세후)**: {to_eok(taxed_prize)}
     - 👥 **당첨자 수**: {winner_count}명 / 총 당첨금: {to_eok(first_total)}
     """
 )
