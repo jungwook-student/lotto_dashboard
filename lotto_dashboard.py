@@ -38,6 +38,37 @@ df.rename(columns={
     "sales": "총 판매금액"
 }, inplace=True)
 
+import math
+
+# 최신 회차 데이터 (가장 높은 회차 기준)
+latest = df.loc[df["회차"].idxmax()]
+latest_round = int(latest["회차"])
+first_prize = int(latest["1등 당첨금"])
+first_total = int(latest["1등 총 당첨금"])
+winner_count = int(latest["1등 당첨자 수"])
+
+# 보너스 번호, 일반 번호 추출
+if "numbers" in df.columns and isinstance(latest["numbers"], str):
+    import ast
+    latest["numbers"] = ast.literal_eval(latest["numbers"])
+numbers = latest["numbers"][:6]
+bonus = latest["numbers"][6]
+
+# 금액 억 단위로 변환
+def to_eok(value):
+    return f"{value / 100_000_000:.1f}억"
+
+# 표시
+st.subheader(f"🎯 {latest_round}회 당첨 결과")
+
+st.markdown(
+    f"""
+    - 🎲 **번호**: {', '.join(map(str, numbers))} + 보너스 {bonus}  
+    - 💰 **1인당 당첨금**: {to_eok(first_prize)}  
+    - 👥 **당첨자 수**: {winner_count}명 / 총 당첨금: {to_eok(first_total)}
+    """
+)
+
 ### 최신회차 1등 판매점
 
 # JSON 데이터 불러오기
