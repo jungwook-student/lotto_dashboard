@@ -112,30 +112,35 @@ st.subheader(f"🗺️ {selected_round}회차 1등 판매점 지도")
 
 st.markdown("""
 <style>
-/* 기본 iframe 스타일 */
+/* iframe 자체 설정 */
 iframe {
     height: 400px !important;
     max-height: 400px;
     min-height: 400px;
     display: block;
-    margin: 0 auto;
+    margin: 0 auto !important;
     padding: 0 !important;
-    border: none;
+    border: none !important;
 }
 
-/* 부모 div 강제 여백 제거 */
-div.element-container iframe {
-    margin-bottom: 0 !important;
-    padding-bottom: 0 !important;
+/* iframe을 감싸는 상위 div도 공백 제거 */
+div.element-container {
+    margin-top: -10px !important;
+    margin-bottom: -10px !important;
+    padding: 0 !important;
 }
 
-/* 모바일 전용 조정 */
+/* 모바일 대응 */
 @media (max-width: 768px) {
     iframe {
         height: 300px !important;
         max-height: 300px;
         min-height: 300px;
-        margin-bottom: -20px !important;
+        margin-bottom: -10px !important;
+    }
+    div.element-container {
+        margin-top: -10px !important;
+        margin-bottom: -10px !important;
     }
 }
 </style>
