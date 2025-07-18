@@ -17,7 +17,7 @@ df = pd.DataFrame(data)
 
 st.set_page_config(page_title="로또 분석 - LOTTO 6/45🎲", layout="wide")
 
-##st.title("로또 분석 - LOTTO 6/45🎲")
+st.title("로또 분석 - LOTTO 6/45🎲")
 
 GA_TRACKING_ID = "G-HV98N97M8G"  # 본인의 실제 ID로 교체
 
