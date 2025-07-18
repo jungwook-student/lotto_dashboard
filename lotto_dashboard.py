@@ -44,6 +44,61 @@ df.rename(columns={
     "sales": "총 판매금액"
 }, inplace=True)
 
+###예상 당첨금 조회
+import streamlit as st
+import requests
+from bs4 import BeautifulSoup
+
+# 금액을 억 단위로 포맷팅
+def format_to_eok(value_str):
+    try:
+        # 숫자만 추출 후 , 제거하고 int로 변환
+        num = int(value_str.replace(",", "").replace("원", ""))
+        eok = round(num / 100_000_000, 1)  # 억 단위로 변환
+        return f"{eok}억 원", eok
+    except:
+        return value_str, 0  # 파싱 실패 시 원래 문자열 반환
+
+# 실시간 크롤링 함수
+@st.cache_data(ttl=600)  # 10분 캐싱
+def fetch_lotto_expectation():
+    url = "https://m.dhlottery.co.kr/common.do?method=main"
+    headers = {"User-Agent": "Mozilla/5.0"}
+    response = requests.get(url, headers=headers)
+    soup = BeautifulSoup(response.text, "html.parser")
+
+    expect_span = soup.select_one("span.expect strong")
+    expect_amount = expect_span.get_text(strip=True) if expect_span else "정보 없음"
+
+    accum_span = soup.select_one("span.accum")
+    accum_amount = accum_span.get_text(strip=True).replace("누적 판매금", "") if accum_span else "정보 없음"
+
+    return expect_amount, accum_amount
+
+# Streamlit UI
+st.title("🎯 로또 실시간 예상 당첨금")
+
+expect_raw, accum_raw = fetch_lotto_expectation()
+expect_fmt, expect_eok = format_to_eok(expect_raw)
+accum_fmt, _ = format_to_eok(accum_raw)
+
+# 메트릭 표시
+st.metric(label="1등 예상 당첨금", value=expect_fmt)
+st.metric(label="누적 판매금", value=accum_fmt)
+
+# 조건부 메시지
+if expect_eok >= 20:
+    st.success("🎉 이번 주 1등 당첨금이 20억을 돌파했어요! 꼭 도전해보세요!")
+elif expect_eok >= 10:
+    st.info("✨ 1등 당첨금이 10억 원이 넘었어요. 꿈은 이루어질 수도 있어요!")
+else:
+    st.warning("💸 이번 주는 조용히 구경만...!")
+
+# 업데이트 시간 표시
+st.caption("10분마다 자동 업데이트 됩니다.")
+###
+
+
 ### 최신회차 
 # 최신 회차 기준 데이터
 latest = df.loc[df["회차"].idxmax()]
