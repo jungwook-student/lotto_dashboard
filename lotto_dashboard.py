@@ -52,15 +52,14 @@ from bs4 import BeautifulSoup
 # 금액을 억 단위로 포맷팅
 def format_to_eok(value_str):
     try:
-        # 숫자만 추출 후 , 제거하고 int로 변환
         num = int(value_str.replace(",", "").replace("원", ""))
-        eok = round(num / 100_000_000, 1)  # 억 단위로 변환
-        return f"{eok}억 원", eok
+        eok = round(num / 100_000_000, 1)  # 억 단위
+        return f"{eok}억 원", num
     except:
-        return value_str, 0  # 파싱 실패 시 원래 문자열 반환
+        return value_str, 0
 
-# 실시간 크롤링 함수
-@st.cache_data(ttl=600)  # 10분 캐싱
+# 예상 당첨금 / 누적 판매금 크롤링
+@st.cache_data(ttl=600)
 def fetch_lotto_expectation():
     url = "https://m.dhlottery.co.kr/common.do?method=main"
     headers = {"User-Agent": "Mozilla/5.0"}
@@ -75,27 +74,44 @@ def fetch_lotto_expectation():
 
     return expect_amount, accum_amount
 
-# Streamlit UI
+# 지난 회차 1등 인원 수 크롤링
+@st.cache_data(ttl=3600)
+def fetch_last_winner_count():
+    url = "https://www.dhlottery.co.kr/gameResult.do?method=byWin"
+    headers = {"User-Agent": "Mozilla/5.0"}
+    res = requests.get(url, headers=headers)
+    soup = BeautifulSoup(res.text, "html.parser")
+
+    # "1등"과 "X명" 이 같이 있는 <td> 찾기
+    table = soup.select("table.tbl_data tbody tr")
+    for row in table:
+        cols = row.select("td")
+        if cols and "1등" in row.get_text():
+            count_text = cols[1].get_text(strip=True)  # 예: "5명"
+            count = int(count_text.replace("명", "").strip())
+            return count
+    return None
+
+# UI 출력
 st.title("🎯 로또 실시간 예상 당첨금")
 
 expect_raw, accum_raw = fetch_lotto_expectation()
-expect_fmt, expect_eok = format_to_eok(expect_raw)
+expect_fmt, expect_won = format_to_eok(expect_raw)
 accum_fmt, _ = format_to_eok(accum_raw)
+winner_count = fetch_last_winner_count()
 
-# 메트릭 표시
 st.metric(label="1등 예상 당첨금", value=expect_fmt)
 st.metric(label="누적 판매금", value=accum_fmt)
 
-# 조건부 메시지
-if expect_eok >= 20:
-    st.success("🎉 이번 주 1등 당첨금이 20억을 돌파했어요! 꼭 도전해보세요!")
-elif expect_eok >= 10:
-    st.info("✨ 1등 당첨금이 10억 원이 넘었어요. 꿈은 이루어질 수도 있어요!")
+# 계산 및 메시지
+if winner_count and winner_count > 0:
+    amount_per_person = int(expect_won / winner_count)
+    amount_per_fmt, _ = format_to_eok(f"{amount_per_person:,}원")
+    st.info(f"📊 지난 회차처럼 {winner_count}명이 당첨된다면,\n👉 1인당 약 {amount_per_fmt} 수령 예상!")
 else:
-    st.warning("💸 이번 주는 조용히 구경만...!")
+    st.warning("지난 회차 당첨자 수 정보를 가져오지 못했습니다.")
 
-# 업데이트 시간 표시
-st.caption("10분마다 자동 업데이트 됩니다.")
+st.caption("실시간 예상 당첨금은 10분마다 자동 업데이트 됩니다.")
 ###
 
 
