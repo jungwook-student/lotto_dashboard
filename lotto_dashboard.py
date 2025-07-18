@@ -159,9 +159,9 @@ selected_round = st.selectbox("회차 선택", rounds)
 # ✅ 선택 회차 필터링
 stores = [item for item in data if item["round"] == selected_round and item["lat"] and item["lng"]]
 
-# ✅ 지도의 중심 좌표 (기본값: 청담에테르노)
-center_lat = 37.527770011
-center_lng = 127.051240341
+# ✅ 지도의 중심 좌표 - 한반도 중앙
+center_lat = 36.5
+center_lng = 127.8
 
 # ✅ 지도 초기화
 m = folium.Map(location=[center_lat, center_lng], zoom_start=7)
