@@ -112,35 +112,31 @@ st.subheader(f"🗺️ {selected_round}회차 1등 판매점 지도")
 
 st.markdown("""
 <style>
-/* iframe 자체 설정 */
+/* 지도 iframe 크기 고정 */
 iframe {
     height: 400px !important;
-    max-height: 400px;
-    min-height: 400px;
-    display: block;
-    margin: 0 auto !important;
-    padding: 0 !important;
+    min-height: 400px !important;
+    max-height: 400px !important;
+    width: 100% !important;
     border: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
 }
 
-/* iframe을 감싸는 상위 div도 공백 제거 */
-div.element-container {
-    margin-top: -10px !important;
-    margin-bottom: -10px !important;
-    padding: 0 !important;
+/* Folium 지도 주변의 Streamlit div 공백 제거 */
+div[data-testid="stVerticalBlock"] > div {
+    margin-top: 0px !important;
+    margin-bottom: 0px !important;
+    padding-top: 0px !important;
+    padding-bottom: 0px !important;
 }
 
 /* 모바일 대응 */
 @media (max-width: 768px) {
     iframe {
-        height: 300px !important;
-        max-height: 300px;
-        min-height: 300px;
-        margin-bottom: -10px !important;
-    }
-    div.element-container {
-        margin-top: -10px !important;
-        margin-bottom: -10px !important;
+        height: 320px !important;
+        min-height: 320px !important;
+        max-height: 320px !important;
     }
 }
 </style>
