@@ -48,15 +48,19 @@ df.rename(columns={
 import streamlit as st
 import requests
 from bs4 import BeautifulSoup
+import json
 
 # 금액을 억 단위로 포맷팅
-def format_to_eok(value_str):
+def format_to_eok(value_str_or_num):
     try:
-        num = int(value_str.replace(",", "").replace("원", ""))
-        eok = round(num / 100_000_000, 1)  # 억 단위
+        if isinstance(value_str_or_num, str):
+            num = int(value_str_or_num.replace(",", "").replace("원", ""))
+        else:
+            num = int(value_str_or_num)
+        eok = round(num / 100_000_000, 1)
         return f"{eok}억 원", num
     except:
-        return value_str, 0
+        return str(value_str_or_num), 0
 
 # 예상 당첨금 / 누적 판매금 크롤링
 @st.cache_data(ttl=600)
@@ -74,44 +78,44 @@ def fetch_lotto_expectation():
 
     return expect_amount, accum_amount
 
-# 지난 회차 1등 인원 수 크롤링
-@st.cache_data(ttl=3600)
-def fetch_last_winner_count():
-    url = "https://www.dhlottery.co.kr/gameResult.do?method=byWin"
-    headers = {"User-Agent": "Mozilla/5.0"}
-    res = requests.get(url, headers=headers)
-    soup = BeautifulSoup(res.text, "html.parser")
+# JSON에서 가장 최신 회차 정보 가져오기
+@st.cache_data
+def load_latest_lotto_info():
+    with open("lotto_100.json", "r", encoding="utf-8") as f:
+        data = json.load(f)
+    # 가장 큰 round 값을 가진 항목 찾기
+    latest = max(data, key=lambda x: x["round"])
+    return latest
 
-    # "1등"과 "X명" 이 같이 있는 <td> 찾기
-    table = soup.select("table.tbl_data tbody tr")
-    for row in table:
-        cols = row.select("td")
-        if cols and "1등" in row.get_text():
-            count_text = cols[1].get_text(strip=True)  # 예: "5명"
-            count = int(count_text.replace("명", "").strip())
-            return count
-    return None
-
-# UI 출력
+# Streamlit UI
 st.title("🎯 로또 실시간 예상 당첨금")
 
 expect_raw, accum_raw = fetch_lotto_expectation()
 expect_fmt, expect_won = format_to_eok(expect_raw)
 accum_fmt, _ = format_to_eok(accum_raw)
-winner_count = fetch_last_winner_count()
+latest = load_latest_lotto_info()
+
+# JSON에서 가져온 지난 회차 정보
+last_round = latest["round"]
+last_winner_count = latest["first_winner_count"]
 
 st.metric(label="1등 예상 당첨금", value=expect_fmt)
 st.metric(label="누적 판매금", value=accum_fmt)
 
-# 계산 및 메시지
-if winner_count and winner_count > 0:
-    amount_per_person = int(expect_won / winner_count)
-    amount_per_fmt, _ = format_to_eok(f"{amount_per_person:,}원")
-    st.info(f"📊 지난 회차처럼 {winner_count}명이 당첨된다면,\n👉 1인당 약 {amount_per_fmt} 수령 예상!")
-else:
-    st.warning("지난 회차 당첨자 수 정보를 가져오지 못했습니다.")
+# 수령액 계산
+if last_winner_count and last_winner_count > 0:
+    per_person = int(expect_won / last_winner_count)
+    per_fmt, _ = format_to_eok(per_person)
+    after_tax = int(per_person * 0.66)  # 세후 수령액 66%
+    after_fmt, _ = format_to_eok(after_tax)
 
-st.caption("실시간 예상 당첨금은 10분마다 자동 업데이트 됩니다.")
+    st.info(f"""📊 지난 회차({last_round}회)처럼 **{last_winner_count}명**이 당첨된다면:
+- 👉 1인당 예상 수령액: **{per_fmt}**
+- 💸 세후 실수령액(예상): **{after_fmt}**""")
+else:
+    st.warning("지난 회차 당첨자 수 정보가 없습니다.")
+
+st.caption("※ 세후 수령액은 약 33% 세금 공제를 기준으로 계산됩니다.")
 ###
 
 
