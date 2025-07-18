@@ -49,8 +49,9 @@ import streamlit as st
 import requests
 from bs4 import BeautifulSoup
 import json
+import datetime
 
-# 금액을 억 단위로 포맷팅
+# 억 단위로 변환
 def format_to_eok(value_str_or_num):
     try:
         if isinstance(value_str_or_num, str):
@@ -62,7 +63,7 @@ def format_to_eok(value_str_or_num):
     except:
         return str(value_str_or_num), 0
 
-# 예상 당첨금 / 누적 판매금 크롤링
+# 예상 당첨금 / 기준시각 / 누적 판매금 크롤링
 @st.cache_data(ttl=600)
 def fetch_lotto_expectation():
     url = "https://m.dhlottery.co.kr/common.do?method=main"
@@ -70,52 +71,75 @@ def fetch_lotto_expectation():
     response = requests.get(url, headers=headers)
     soup = BeautifulSoup(response.text, "html.parser")
 
+    # 기준 시각
+    time_span = soup.select_one("span.next_date")
+    time_text = time_span.get_text(strip=True).replace("기준", "").strip() if time_span else "알 수 없음"
+
+    # 예상 당첨금
     expect_span = soup.select_one("span.expect strong")
     expect_amount = expect_span.get_text(strip=True) if expect_span else "정보 없음"
 
+    # 누적 판매금
     accum_span = soup.select_one("span.accum")
     accum_amount = accum_span.get_text(strip=True).replace("누적 판매금", "") if accum_span else "정보 없음"
 
-    return expect_amount, accum_amount
+    return expect_amount, accum_amount, time_text
 
-# JSON에서 가장 최신 회차 정보 가져오기
+# 가장 최근 회차 정보 불러오기
 @st.cache_data
 def load_latest_lotto_info():
     with open("lotto_100.json", "r", encoding="utf-8") as f:
         data = json.load(f)
-    # 가장 큰 round 값을 가진 항목 찾기
     latest = max(data, key=lambda x: x["round"])
     return latest
 
-# Streamlit UI
+# 다음 추첨일 계산
+def get_next_draw_date(last_draw_date):
+    next_draw = last_draw_date + datetime.timedelta(days=7)
+    return next_draw
+
+# Streamlit 시작
 st.title("🎯 로또 실시간 예상 당첨금")
 
-expect_raw, accum_raw = fetch_lotto_expectation()
+# 데이터 불러오기
+expect_raw, accum_raw, time_text = fetch_lotto_expectation()
 expect_fmt, expect_won = format_to_eok(expect_raw)
 accum_fmt, _ = format_to_eok(accum_raw)
 latest = load_latest_lotto_info()
 
-# JSON에서 가져온 지난 회차 정보
+# 다음 회차 및 추첨일 계산
 last_round = latest["round"]
-last_winner_count = latest["first_winner_count"]
+next_round = last_round + 1
+last_draw_date = datetime.datetime.strptime(latest["date"], "%Y-%m-%d") if "date" in latest else datetime.datetime.today()
+next_draw_date = get_next_draw_date(last_draw_date)
+today = datetime.datetime.today()
+d_day = (next_draw_date.date() - today.date()).days
+d_day_label = f"D-{d_day}" if d_day > 0 else "D-day"
+
+# 표시
+st.subheader(f"🧾 제 {next_round}회 로또 예상 정보")
+st.write(f"📅 추첨일: **{next_draw_date.strftime('%Y-%m-%d (%a)')}**  ({d_day_label})")
+st.write(f"🕒 판매금 기준 시각: **{time_text}**")
 
 st.metric(label="1등 예상 당첨금", value=expect_fmt)
 st.metric(label="누적 판매금", value=accum_fmt)
 
-# 수령액 계산
-if last_winner_count and last_winner_count > 0:
-    per_person = int(expect_won / last_winner_count)
+# 지난 회차 1등 인원 기반 수령액 계산
+winner_count = latest.get("first_winner_count", None)
+if winner_count and winner_count > 0:
+    per_person = int(expect_won / winner_count)
     per_fmt, _ = format_to_eok(per_person)
-    after_tax = int(per_person * 0.66)  # 세후 수령액 66%
+    after_tax = int(per_person * 0.66)
     after_fmt, _ = format_to_eok(after_tax)
 
-    st.info(f"""📊 지난 회차({last_round}회)처럼 **{last_winner_count}명**이 당첨된다면:
+    st.info(f"""📊 지난 회차({last_round}회)처럼 **{winner_count}명**이 당첨된다면:
 - 👉 1인당 예상 수령액: **{per_fmt}**
 - 💸 세후 실수령액(예상): **{after_fmt}**""")
 else:
-    st.warning("지난 회차 당첨자 수 정보가 없습니다.")
+    st.warning("지난 회차 1등 인원 수를 알 수 없습니다.")
 
 st.caption("※ 세후 수령액은 약 33% 세금 공제를 기준으로 계산됩니다.")
+st.caption("※ 정보 기준 시각은 동행복권 모바일 웹 기준입니다.")
 ###
 
 
