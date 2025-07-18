@@ -112,11 +112,22 @@ st.subheader(f"🗺️ {selected_round}회차 1등 판매점 지도")
 
 st.markdown("""
 <style>
+/* 데스크탑 & 기본 */
 iframe[src*="leaflet"] {
     height: 400px !important;
     max-height: 400px;
     min-height: 400px;
     margin-bottom: -30px;
+}
+
+/* 모바일 대응 */
+@media (max-width: 480px) {
+    iframe[src*="leaflet"] {
+        height: 300px !important;
+        max-height: 300px;
+        min-height: 300px;
+        margin-bottom: -20px;
+    }
 }
 </style>
 """, unsafe_allow_html=True)
