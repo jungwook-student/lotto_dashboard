@@ -17,18 +17,7 @@ df = pd.DataFrame(data)
 
 st.set_page_config(page_title="로또 분석 - LOTTO 6/45🎲", layout="wide")
 
-st.title("로또 분석 - LOTTO 6/45🎲")
-
-st.markdown("""
-<style>
-h1 {
-    margin-bottom: 10px !important;
-}
-h3 {
-    margin-top: 5px !important;
-}
-</style>
-""", unsafe_allow_html=True)
+##st.title("로또 분석 - LOTTO 6/45🎲")
 
 GA_TRACKING_ID = "G-HV98N97M8G"  # 본인의 실제 ID로 교체
 
